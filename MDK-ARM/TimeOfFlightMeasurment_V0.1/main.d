@@ -34,4 +34,5 @@ timeofflightmeasurment_v0.1\main.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4x
 timeofflightmeasurment_v0.1\main.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h
 timeofflightmeasurment_v0.1\main.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h
 timeofflightmeasurment_v0.1\main.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h
+timeofflightmeasurment_v0.1\main.o: ../Inc/LCD.h
 timeofflightmeasurment_v0.1\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h

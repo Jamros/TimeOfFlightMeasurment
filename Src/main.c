@@ -23,6 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "LCD.h"
 #include <stdio.h>
 /* USER CODE END Includes */
 
@@ -60,14 +61,13 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim); //input capture
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint32_t IC_Value1 = 0;
-uint32_t IC_Value2 = 0;
-uint32_t Difference = 0;
-uint32_t MicroTime = 0;
+volatile uint32_t IC_Value1 = 0;
+volatile uint32_t IC_Value2 = 0;
+volatile uint32_t Difference = 0;
+volatile uint8_t TimeRdyToSend = 0; //0 not rdy to send , 1 rdy to send
+double MicroTime = 0;
 double Speed = 0;
-uint8_t TimeRdyToSend = 0; //0 not rdy to send , 1 rdy to send
-
-const float GateRange = 12.5;
+double GateRange = 12.5;
 /* USER CODE END 0 */
 
 /**
@@ -102,6 +102,10 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+	LCD_Init();
+	LCD_Puts(0,0,"Cruising speed:");
+	LCD_Puts(0,1,"0.0");
+	LCD_Puts(13,1,"M/S");
 	HAL_TIM_IC_Start_IT(&htim2,TIM_CHANNEL_1);
 	HAL_TIM_IC_Start_IT(&htim2,TIM_CHANNEL_2);
   /* USER CODE END 2 */
@@ -113,14 +117,19 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		if (TimeRdyToSend ==1)
+		if (TimeRdyToSend == 1 )
 		{
-			MicroTime = Difference*(1000000/HAL_RCC_GetPCLK1Freq());
-			Speed = GateRange/MicroTime;
+			char buffer [13];
+			MicroTime = Difference*(1000000.0/SystemCoreClock);
+			Speed = 10*GateRange/MicroTime;
+			sprintf(buffer,"%.6E",Speed);
+			LCD_Puts(0,1,buffer);
 			IC_Value1 = 0;
 			IC_Value2 = 0;
-			printf("Zmierzona predkosc to %f cm/ms !\n\r", Speed);
 			TimeRdyToSend = 0;
+			__HAL_TIM_SetCounter(&htim2,0);
+			HAL_TIM_IC_Start_IT(&htim2,TIM_CHANNEL_1);
+			HAL_TIM_IC_Start_IT(&htim2,TIM_CHANNEL_2);
 		}
   }
   /* USER CODE END 3 */
@@ -320,30 +329,21 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 	if (IC_Value1 > IC_Value2 && IC_Value2 != 0)
 	{
 		Difference = IC_Value1 - IC_Value2;
-		TimeRdyToSend=1;
+		TimeRdyToSend = 1;
+		HAL_TIM_IC_Stop_IT(&htim2,TIM_CHANNEL_1);
+		HAL_TIM_IC_Stop_IT(&htim2,TIM_CHANNEL_2);
 	}
 	else if (IC_Value1 < IC_Value2 && IC_Value1 != 0)
 	{
 		Difference = IC_Value2 - IC_Value1;
-		TimeRdyToSend=1;
+		TimeRdyToSend = 1 ;
+		HAL_TIM_IC_Stop_IT(&htim2,TIM_CHANNEL_1);
+		HAL_TIM_IC_Stop_IT(&htim2,TIM_CHANNEL_2);
 	}
 	else
 	{
 		Error_Handler();
 	}
-}
-
-void send_char(char c)
-{
- HAL_UART_Transmit(&huart2, (uint8_t*)&c, 1, 1000);
-}
-
-int __io_putchar(int ch)
-{
- if (ch == '\n')
- send_char('\r');
- send_char(ch);
- return ch;
 }
 /* USER CODE END 4 */
 
