@@ -67,7 +67,7 @@ uint32_t MicroTime = 0;
 double Speed = 0;
 uint8_t TimeRdyToSend = 0; //0 not rdy to send , 1 rdy to send
 
-const float GateRange = 24.7;
+const float GateRange = 12.5;
 /* USER CODE END 0 */
 
 /**
