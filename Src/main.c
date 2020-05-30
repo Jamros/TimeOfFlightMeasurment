@@ -119,11 +119,13 @@ int main(void)
     /* USER CODE BEGIN 3 */
 		if (TimeRdyToSend == 1 )
 		{
-			char buffer [13];
+			uint8_t n;
+			uint8_t buffer [14];
 			MicroTime = Difference*(1000000.0/SystemCoreClock);
 			Speed = 10*GateRange/MicroTime;
-			sprintf(buffer,"%.6E",Speed);
-			LCD_Puts(0,1,buffer);
+			n = sprintf((char*)buffer,"%.6E",Speed);
+			LCD_Puts(0,1,(char*)buffer);
+			HAL_UART_Transmit(&huart2,buffer,n,10);
 			IC_Value1 = 0;
 			IC_Value2 = 0;
 			TimeRdyToSend = 0;
