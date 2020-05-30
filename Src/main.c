@@ -125,7 +125,9 @@ int main(void)
 			Speed = 10000*GateRange/MicroTime;
 			n = sprintf((char*)buffer,"%.6E",Speed);
 			LCD_Puts(0,1,(char*)buffer);
-			HAL_UART_Transmit(&huart2,buffer,n,10);
+			buffer[12] = 10;
+			buffer[13] = 13;
+			HAL_UART_Transmit(&huart2,buffer,n+2,10);
 			IC_Value1 = 0;
 			IC_Value2 = 0;
 			TimeRdyToSend = 0;
