@@ -122,7 +122,7 @@ int main(void)
 			uint8_t n;
 			uint8_t buffer [14];
 			MicroTime = Difference*(1000000.0/SystemCoreClock);
-			Speed = 10*GateRange/MicroTime;
+			Speed = 10000*GateRange/MicroTime;
 			n = sprintf((char*)buffer,"%.6E",Speed);
 			LCD_Puts(0,1,(char*)buffer);
 			HAL_UART_Transmit(&huart2,buffer,n,10);
