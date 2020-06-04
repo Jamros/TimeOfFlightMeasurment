@@ -347,11 +347,13 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) //if the source is channel 1
 	{
-		if (IC_Value1 == 0) IC_Value1 = HAL_TIM_ReadCapturedValue(htim,TIM_CHANNEL_1);
+		if (IC_Value1 == 0) 
+				IC_Value1 = HAL_TIM_ReadCapturedValue(htim,TIM_CHANNEL_1);
 	}
 	else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2) //if the source is channel 2
 	{
-		if (IC_Value2 == 0) IC_Value2 = HAL_TIM_ReadCapturedValue(htim,TIM_CHANNEL_2);
+		if (IC_Value2 == 0) 
+				IC_Value2 = HAL_TIM_ReadCapturedValue(htim,TIM_CHANNEL_2);
 	}
 	
 	if (IC_Value1 > IC_Value2 && IC_Value2 != 0)
