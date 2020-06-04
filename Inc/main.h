@@ -62,6 +62,8 @@ void Error_Handler(void);
 #define MCO_GPIO_Port GPIOA
 #define VCP_TX_Pin GPIO_PIN_2
 #define VCP_TX_GPIO_Port GPIOA
+#define ButtonTriger_Pin GPIO_PIN_12
+#define ButtonTriger_GPIO_Port GPIOA
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
@@ -70,7 +72,7 @@ void Error_Handler(void);
 #define VCP_RX_GPIO_Port GPIOA
 #define LD3_Pin GPIO_PIN_3
 #define LD3_GPIO_Port GPIOB
-
+/* USER CODE BEGIN Private defines */
 #define LCD_RS_GPIO_Port GPIOB
 #define LCD_RS_Pin GPIO_PIN_5
 #define LCD_EN_GPIO_Port GPIOA
@@ -85,9 +87,6 @@ void Error_Handler(void);
 #define LCD_D6_Pin GPIO_PIN_4
 #define LCD_D7_GPIO_Port GPIOA
 #define LCD_D7_Pin GPIO_PIN_3
-
-/* USER CODE BEGIN Private defines */
-
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
