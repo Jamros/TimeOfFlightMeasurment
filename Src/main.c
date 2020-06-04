@@ -61,6 +61,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim); //input capture
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+volatile uint32_t StartMeasurment = 0; // 0 no clicked button / 1 clikced start button
 volatile uint32_t IC_Value1 = 0;
 volatile uint32_t IC_Value2 = 0;
 volatile uint32_t Difference = 0;
@@ -117,7 +118,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		if (TimeRdyToSend == 1 )
+		if (TimeRdyToSend )
 		{
 			uint8_t n;
 			uint8_t buffer [14];
@@ -138,6 +139,15 @@ int main(void)
 			__HAL_TIM_SetCounter(&htim2,0);
 			//HAL_TIM_IC_Start_IT(&htim2,TIM_CHANNEL_1);
 			//HAL_TIM_IC_Start_IT(&htim2,TIM_CHANNEL_2);
+		}
+		else if(StartMeasurment)
+		{
+			LCD_Clear();
+			HAL_TIM_IC_Start_IT(&htim2,TIM_CHANNEL_1);
+			HAL_TIM_IC_Start_IT(&htim2,TIM_CHANNEL_2);
+			LCD_Puts(0,0,"Oczekiwanie na");
+			LCD_Puts(0,1,"pocisk...");
+			StartMeasurment = 0;
 		}
   }
   /* USER CODE END 3 */
@@ -331,11 +341,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-	HAL_TIM_IC_Start_IT(&htim2,TIM_CHANNEL_1);
-	HAL_TIM_IC_Start_IT(&htim2,TIM_CHANNEL_2);
-	LCD_Clear();
-	LCD_Puts(0,0,"Oczekiwanie na");
-	LCD_Puts(0,1,"pocisk...");
+	StartMeasurment = 1;
 }
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
