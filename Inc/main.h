@@ -71,8 +71,11 @@ void Error_Handler(void);
 #define SWCLK_GPIO_Port GPIOA
 #define VCP_RX_Pin GPIO_PIN_15
 #define VCP_RX_GPIO_Port GPIOA
-#define LD3_Pin GPIO_PIN_3
-#define LD3_GPIO_Port GPIOB
+#define LD_Mode_Pin GPIO_PIN_3
+#define LD_Mode_GPIO_Port GPIOB
+#define Button_Mode_Pin GPIO_PIN_7
+#define Button_Mode_GPIO_Port GPIOB
+#define Button_Mode_EXTI_IRQn EXTI9_5_IRQn
 /* USER CODE BEGIN Private defines */
 #define LCD_RS_GPIO_Port GPIOB
 #define LCD_RS_Pin GPIO_PIN_5
@@ -88,6 +91,10 @@ void Error_Handler(void);
 #define LCD_D6_Pin GPIO_PIN_4
 #define LCD_D7_GPIO_Port GPIOA
 #define LCD_D7_Pin GPIO_PIN_3
+
+#define CONTINOUS_MODE 1
+#define DISCONTINOUS_MODE 1
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

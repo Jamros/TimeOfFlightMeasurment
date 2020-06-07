@@ -66,6 +66,9 @@ volatile uint32_t IC_Value1 = 0;
 volatile uint32_t IC_Value2 = 0;
 volatile uint32_t Difference = 0;
 volatile uint8_t TimeRdyToSend = 0; //0 not rdy to send , 1 rdy to send
+volatile uint8_t sChangeMode = 1; //Change mode
+
+uint8_t Mode = CONTINOUS_MODE;
 double MicroTime = 0;
 double Speed = 0;
 double GateRange = 12.5;
@@ -148,6 +151,21 @@ int main(void)
 			LCD_Puts(0,0,"Oczekiwanie na");
 			LCD_Puts(0,1,"pocisk...");
 			StartMeasurment = 0;
+		}
+		else if (sChangeMode)
+		{
+			if (Mode == CONTINOUS_MODE)
+			{
+				HAL_GPIO_WritePin(LD_Mode_GPIO_Port,LD_Mode_Pin,GPIO_PIN_SET);
+				Mode = DISCONTINOUS_MODE;
+				sChangeMode = 0;
+			}
+			else	
+			{
+				HAL_GPIO_WritePin(LD_Mode_GPIO_Port,LD_Mode_Pin,GPIO_PIN_RESET);
+				Mode = CONTINOUS_MODE;
+				sChangeMode = 0;
+			}
 		}
   }
   /* USER CODE END 3 */
@@ -318,7 +336,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LD_Mode_GPIO_Port, LD_Mode_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : ButtonTriger_Pin */
   GPIO_InitStruct.Pin = ButtonTriger_Pin;
@@ -326,14 +344,23 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(ButtonTriger_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD3_Pin */
-  GPIO_InitStruct.Pin = LD3_Pin;
+  /*Configure GPIO pin : LD_Mode_Pin */
+  GPIO_InitStruct.Pin = LD_Mode_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD3_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(LD_Mode_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : Button_Mode_Pin */
+  GPIO_InitStruct.Pin = Button_Mode_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(Button_Mode_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
@@ -341,7 +368,14 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-	StartMeasurment = 1;
+	if (GPIO_Pin == ButtonTriger_Pin) 
+	{
+		StartMeasurment = 1;
+	}
+	else if(GPIO_Pin == Button_Mode_Pin)
+	{
+		sChangeMode = 1;
+	}
 }
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
